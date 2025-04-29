@@ -18,14 +18,38 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos y tipografía
+# Estilos para alto contraste y botones en negro
 st.markdown("""
 <style>
-  body { background-color: #ffffff; color: #000000; }
-  .block-container { padding: 2rem 3rem; background: #f9f9f9; }
-  h1, h2, h3, h4, h5 { color: #000000; }
-  .stButton > button { color: #000000; border: 1px solid #000000; padding: 0.6rem 1.2rem; font-size: 1rem; }
-  a { color: #000000; }
+  body, .block-container, h1, h2, h3, h4, h5, h6, p, .stMarkdown {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+  }
+  .block-container {
+    padding: 2rem 3rem;
+    background: #f9f9f9;
+  }
+  .stButton > button {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #000000;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+  }
+  .stButton > button:hover {
+    background-color: #333333 !important;
+  }
+  a {
+    color: #000000 !important;
+  }
+  .stRadio > label,
+  .stSelectbox > label,
+  .stSlider > label,
+  .stTextInput > label {
+    color: #000000 !important;
+    font-weight: bold;
+  }
 </style>
 """, unsafe_allow_html=True)
 
@@ -70,7 +94,7 @@ with st.sidebar:
     }
     src_key = st.selectbox('🔄Idioma origen', list(LANGS.keys()), index=0)
     dst_key = st.selectbox('🔁Idioma destino', list(LANGS.keys()), index=1)
-    accent = st.selectbox('📣 Acento (TLD)',['com','co.uk','com.au','ca','ie','co.za'], index=0)
+    accent = st.selectbox('📣 Acento (TLD)', ['com','co.uk','com.au','ca','ie','co.za'], index=0)
     play = st.button('🎧 Traducir y generar audio')
     remove_days = st.slider('🗑️Eliminar audios con más de días:', 1, 30, 7)
 
@@ -86,27 +110,24 @@ def text_to_speech(text, src, dst, tld):
     return translated, path
 
 # Al pulsar el botón
-def handle_audio():
+if play:
     if extracted.strip() == "":
         st.warning("📋 No hay texto para traducir.")
-        return
-    translated, audio_file = text_to_speech(
-        extracted,
-        src=LANGS[src_key],
-        dst=LANGS[dst_key],
-        tld=accent
-    )
-    st.balloons()
-    st.markdown("## 📜 Texto traducido:")
-    st.write(translated)
-    audio_bytes = open(audio_file, 'rb').read()
-    st.audio(audio_bytes)
-    b64 = base64.b64encode(audio_bytes).decode()
-    dl = f"<a href='data:audio/mp3;base64,{b64}' download='{os.path.basename(audio_file)}'>⬇️ Descargar audio</a>"
-    st.markdown(dl, unsafe_allow_html=True)
-
-if play:
-    handle_audio()
+    else:
+        translated, audio_file = text_to_speech(
+            extracted,
+            src=LANGS[src_key],
+            dst=LANGS[dst_key],
+            tld=accent
+        )
+        st.balloons()
+        st.markdown("## 📜 Texto traducido:")
+        st.write(translated)
+        audio_bytes = open(audio_file, 'rb').read()
+        st.audio(audio_bytes)
+        b64 = base64.b64encode(audio_bytes).decode()
+        dl = f"<a href='data:audio/mp3;base64,{b64}' download='{os.path.basename(audio_file)}'>⬇️ Descargar audio</a>"
+        st.markdown(dl, unsafe_allow_html=True)
 
 # Limpieza de archivos antiguos
 def cleanup(days):
@@ -114,5 +135,4 @@ def cleanup(days):
     for f in glob.glob('temp/*.mp3'):
         if os.stat(f).st_mtime < cutoff:
             os.remove(f)
-
 cleanup(remove_days)
