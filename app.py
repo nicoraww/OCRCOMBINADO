@@ -18,9 +18,10 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos para alto contraste y botones en negro
+# Estilos para alto contraste y botones mejorados
 st.markdown("""
 <style>
+  /* Texto y fondo */
   body, .block-container, h1, h2, h3, h4, h5, h6, p, .stMarkdown {
     color: #000000 !important;
     background-color: #ffffff !important;
@@ -29,26 +30,37 @@ st.markdown("""
     padding: 2rem 3rem;
     background: #f9f9f9;
   }
+  /* Botones con gradiente y sombra */
   .stButton > button {
-    background-color: #000000 !important;
+    background: linear-gradient(135deg, #333333, #000000) !important;
     color: #ffffff !important;
-    border: 1px solid #000000;
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    border-radius: 0.5rem;
+    border: none !important;
+    border-radius: 0.75rem !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   .stButton > button:hover {
-    background-color: #333333 !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5) !important;
   }
+  /* Enlaces de descarga */
   a {
     color: #000000 !important;
+    text-decoration: none !important;
+    font-weight: bold;
   }
+  a:hover {
+    text-decoration: underline !important;
+  }
+  /* Labels y radio */
   .stRadio > label,
   .stSelectbox > label,
   .stSlider > label,
   .stTextInput > label {
     color: #000000 !important;
-    font-weight: bold;
+    font-weight: bold !important;
   }
 </style>
 """, unsafe_allow_html=True)
